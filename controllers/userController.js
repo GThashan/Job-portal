@@ -37,3 +37,35 @@ export const registerController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const loginController = async(req,res,next)=>{
+
+try {
+  const { email, password } = req.body;
+
+  if(!email){
+    next("Email is required");
+  }
+
+  const user = await Usermodel.findOne({email});
+  if(!user){
+    next("User not exit");
+  }
+
+  const isMatch = await user.comparePassword(password);
+  if(!isMatch){
+    next("password is incorect");
+  }
+  
+  const token = user.creatJWT();
+
+  return res.status(200).send({success:true,message :"Login sucesssfull",token})
+  
+} catch (error) {
+  
+  console.log(error);
+
+  
+}
+  
+}
