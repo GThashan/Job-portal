@@ -1,71 +1,29 @@
-import Usermodel from "../models/Usermodel.js";
+import Usermodel from "../models/Usermodel"
 
-
-export const registerController = async (req, res, next) => {
+export const updateController = async(req,res,next)=>{
   try {
-    const { name, email, password } = req.body;
-
-    if (!name) {
-      next("name is required");
+    const {name,lastName,email,password,location} = req.body;
+    if(!name || !lastName || !email || !password || !location){
+        next("provide all feilds");
     }
-    if (!email) {
-      next("Email is required");
-    }
-    if (!password) {
-      next("Password is required");
-    }
+    const user = await Usermodel.findOne({_id : req.user.userId});
+    user.name = name;
+    user.lastName = lastName;
+    user.email = email;
+    user.password = password;
+    user.location = location;
 
-    // Check if user already exists
-    const existingUser = await Usermodel.findOne({ email });
-    if (existingUser) {
-      next("User already exists");
-    }
-
-    
-
-    // Create a new user
-    const user = await Usermodel.create({
-      name,
-      email,
-      password,
-    });
-
+    await user.save();
     const token = user.creatJWT();
 
-    return res.status(200).send({success:true,message :"Register sucesssfull",user,token})
+    return res.status(200).json({user,token})
+    
   } catch (error) {
-    next(error);
+  
+     console.log(error);
+
   }
-};
-
-export const loginController = async(req,res,next)=>{
-
-try {
-  const { email, password } = req.body;
-
-  if(!email){
-    next("Email is required");
-  }
-
-  const user = await Usermodel.findOne({email});
-  if(!user){
-    next("User not exit");
-  }
-
-  const isMatch = await user.comparePassword(password);
-  if(!isMatch){
-    next("password is incorect");
-  }
-  
-  const token = user.creatJWT();
-
-  return res.status(200).send({success:true,message :"Login sucesssfull",token})
-  
-} catch (error) {
-  
-  console.log(error);
-
-  
-}
-  
+   
+   
+    
 }
