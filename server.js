@@ -4,6 +4,7 @@ import dbconn from './config/db.js'
 import cors from 'cors'
 import authRoute from './routes/authRoute.js'
 import userRoute from './routes/authRoute.js'
+import jobRoute   from './routes/jobRoute.js'
 import errorMiddleware from './middleware/errorMiddleware.js'
 dotenv.config();
 
@@ -18,6 +19,8 @@ app.use(express.json());
 
 app.use('/api/v1/auth',authRoute)
 app.use('/api/v1/user',userRoute)
+app.use('/api/v1/job',jobRoute)
+
 
 
 
